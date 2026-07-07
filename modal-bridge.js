@@ -60,9 +60,30 @@
 
   function logCapabilities() {
     try {
+      var objs = RT.objects ? Object.keys(RT.objects) : [];
+      console.log(TAG, "TODOS os objetos (" + objs.length + "):", objs);
       console.log(TAG, "globalVars:", RT.globalVars ? Object.keys(RT.globalVars) : "n/d");
-      console.log(TAG, "objects:", RT.objects ? Object.keys(RT.objects).slice(0, 40) : "n/d");
+      window.__c3objs = objs;
     } catch (e) {}
+  }
+
+  // escaneia objetos e retorna os visiveis cujo nome sugere modal
+  function scanVisibleModals() {
+    var hits = [];
+    try {
+      var names = RT.objects ? Object.keys(RT.objects) : [];
+      for (var i = 0; i < names.length; i++) {
+        var nm = names[i];
+        if (!/setting|popup|controller|container|modal|window|panel|dialog|ajuste/i.test(nm)) continue;
+        var o = RT.objects[nm];
+        if (!o || !o.getAllInstances) continue;
+        var insts = o.getAllInstances();
+        for (var j = 0; j < insts.length; j++) {
+          if (insts[j].isVisible) { hits.push(nm); break; }
+        }
+      }
+    } catch (e) {}
+    return hits;
   }
 
   /* ---------- helpers de acesso ao jogo ---------- */
@@ -95,12 +116,10 @@
   function onTick() {
     if (!RT) return;
     tickCount++;
-    // SETTINGS: quando o controller nativo fica visivel, abre o HTML e esconde o nativo
-    var sOpen = isVisible("setting_controller");
-    if (tickCount % 30 === 0) setStatus("runtime OK | settings visivel=" + sOpen, "#8f8");
-    if (sOpen && !lastSettingsOpen) { setStatus("settings detectado -> abrindo HTML", "#8ff"); openSettingsHTML(); }
-    if (!sOpen && lastSettingsOpen) { closeSettingsHTML(true); }
-    lastSettingsOpen = sOpen;
+    if (tickCount % 15 === 0) {
+      var vis = scanVisibleModals();
+      setStatus("runtime OK | visiveis: " + (vis.length ? vis.join(", ") : "(nenhum)"), vis.length ? "#8ff" : "#8f8");
+    }
   }
 
   function hideNativeSettings() {
