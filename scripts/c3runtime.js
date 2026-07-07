@@ -2189,7 +2189,7 @@ self.C3_ExpressionFuncs = [
 		() => "LoadLevel",
 		p => {
 			const n0 = p._GetNode(0);
-			return () => (and("lv", n0.ExpObject(".level_unlock")) + ".json");
+			return () => (and("levels/lv", n0.ExpObject(".level_unlock")) + ".json");
 		},
 		p => {
 			const f0 = p._GetNode(0).GetBoundMethod();
