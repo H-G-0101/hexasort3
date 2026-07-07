@@ -1,0 +1,103 @@
+{
+ "bonus": 5,
+ "targets": [
+  {
+   "type": "hexa_colorFull",
+   "type_color": -1,
+   "target": 1330,
+   "counter": 0
+  }
+ ],
+ "list_types": [
+  {
+   "score_start": 0,
+   "score_end": 0,
+   "type": 1,
+   "value": 0
+  },
+  {
+   "score_start": 0,
+   "score_end": 0,
+   "type": 2,
+   "value": 0
+  },
+  {
+   "score_start": 0,
+   "score_end": 0,
+   "type": 3,
+   "value": 0
+  },
+  {
+   "score_start": 0,
+   "score_end": 50,
+   "type": 4,
+   "value": 0
+  },
+  {
+   "score_start": 301,
+   "score_end": 401,
+   "type": 5,
+   "value": 0
+  },
+  {
+   "score_start": 501,
+   "score_end": 601,
+   "type": 6,
+   "value": 0
+  },
+  {
+   "score_start": 701,
+   "score_end": 801,
+   "type": 7,
+   "value": 0
+  },
+  {
+   "score_start": 1201,
+   "score_end": 1301,
+   "type": 8,
+   "value": 0
+  },
+  {
+   "score_start": 1501,
+   "score_end": 1601,
+   "type": 9,
+   "value": 0
+  },
+  {
+   "score_start": 1801,
+   "score_end": 1901,
+   "type": 10,
+   "value": 0
+  },
+  {
+   "score_start": 2101,
+   "score_end": 2151,
+   "type": 11,
+   "value": 0
+  },
+  {
+   "score_start": 2201,
+   "score_end": 2301,
+   "type": 12,
+   "value": 0
+  },
+  {
+   "score_start": 2501,
+   "score_end": 2701,
+   "type": 13,
+   "value": 0
+  },
+  {
+   "score_start": 2901,
+   "score_end": 3101,
+   "type": 14,
+   "value": 0
+  },
+  {
+   "score_start": 1000000000,
+   "score_end": 1000000000000,
+   "type": 15,
+   "value": 0
+  }
+ ]
+}
