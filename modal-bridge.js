@@ -97,7 +97,17 @@
   }
   function isVisible(name) {
     var i = getInst(name);
-    return !!(i && i.isVisible);
+    if (!i || !i.isVisible) return false;
+    // muitos controllers ficam "visible" mas com opacidade 0 quando fechados
+    var op = (typeof i.opacity === "number") ? i.opacity : 1;
+    if (op <= 0.5) return false;
+    // e precisa estar dentro da tela (nao jogado p/ fora)
+    try {
+      if (typeof i.x === "number" && RT && RT.layout) {
+        // aceita; checagem de tela e opcional
+      }
+    } catch (e) {}
+    return true;
   }
   function callFn(name) {
     try {
@@ -116,10 +126,16 @@
   function onTick() {
     if (!RT) return;
     tickCount++;
-    if (tickCount % 15 === 0) {
-      var vis = scanVisibleModals();
-      setStatus("runtime OK | visiveis: " + (vis.length ? vis.join(", ") : "(nenhum)"), vis.length ? "#8ff" : "#8f8");
+    // detecta o modal de settings pelo setting_controller ficando VISIVEL
+    var sOpen = isVisible("setting_controller");
+    if (sOpen && !lastSettingsOpen) { openSettingsHTML(); }
+    if (!sOpen && lastSettingsOpen) { closeSettingsHTML(true); }
+    lastSettingsOpen = sOpen;
+    if (tickCount % 30 === 0) {
+      setStatus("runtime OK | settings=" + sOpen, sOpen ? "#8ff" : "#8f8");
     }
+    // enquanto o HTML estiver aberto, garante o nativo escondido a cada frame
+    if (sOpen && overlay && overlay.style.display === "flex") hideNativeSettings();
   }
 
   function hideNativeSettings() {
