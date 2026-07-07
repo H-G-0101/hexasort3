@@ -9,21 +9,52 @@
   var TAG = "[modal-bridge]";
   var RT = null;              // runtime do C3
   var lastSettingsOpen = false;
+  var registered = false;
+
+  /* ---------- selo de status visivel (debug) ---------- */
+  var badge = null;
+  function setStatus(txt, color) {
+    try {
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.style.cssText =
+          "position:fixed;left:6px;bottom:6px;z-index:100000;background:#000a;color:#fff;" +
+          "font:12px/1.3 monospace;padding:4px 8px;border-radius:6px;pointer-events:none;max-width:70vw";
+        (document.body || document.documentElement).appendChild(badge);
+      }
+      badge.textContent = "bridge: " + txt;
+      badge.style.color = color || "#8f8";
+    } catch (e) {}
+  }
 
   /* ---------- captura do runtime via API de script do C3 ---------- */
   function boot() {
-    if (typeof runOnStartup === "function") {
-      runOnStartup(function (runtime) {
-        RT = runtime;
-        window.__c3 = runtime; // p/ debug no console
-        console.log(TAG, "runtime capturado", runtime);
-        try { runtime.addEventListener("tick", onTick); }
-        catch (e) { console.warn(TAG, "sem evento tick, usando polling", e); setInterval(onTick, 100); }
-        logCapabilities();
-      });
+    setStatus("aguardando runOnStartup...", "#fd8");
+    tryRegister();
+  }
+  function tryRegister() {
+    if (registered) return;
+    var ros = (typeof runOnStartup === "function") ? runOnStartup
+            : (self && typeof self.runOnStartup === "function" ? self.runOnStartup : null);
+    if (ros) {
+      registered = true;
+      setStatus("registrado; aguardando runtime...", "#fd8");
+      try {
+        ros(function (runtime) {
+          RT = runtime;
+          window.__c3 = runtime;
+          setStatus("runtime OK", "#8f8");
+          console.log(TAG, "runtime capturado", runtime);
+          logCapabilities();
+          try { runtime.addEventListener("tick", onTick); }
+          catch (e) { setInterval(onTick, 100); }
+        });
+      } catch (e) {
+        setStatus("erro no runOnStartup: " + e.message, "#f88");
+        console.warn(TAG, e);
+      }
     } else {
-      // runOnStartup ainda nao existe: tenta de novo
-      setTimeout(boot, 15);
+      setTimeout(tryRegister, 10);
     }
   }
 
@@ -60,11 +91,14 @@
   function setGV(name, val) { try { if (RT.globalVars && name in RT.globalVars) RT.globalVars[name] = val; } catch (e) {} }
 
   /* ---------- deteccao dos modais nativos ---------- */
+  var tickCount = 0;
   function onTick() {
     if (!RT) return;
+    tickCount++;
     // SETTINGS: quando o controller nativo fica visivel, abre o HTML e esconde o nativo
     var sOpen = isVisible("setting_controller");
-    if (sOpen && !lastSettingsOpen) { openSettingsHTML(); }
+    if (tickCount % 30 === 0) setStatus("runtime OK | settings visivel=" + sOpen, "#8f8");
+    if (sOpen && !lastSettingsOpen) { setStatus("settings detectado -> abrindo HTML", "#8ff"); openSettingsHTML(); }
     if (!sOpen && lastSettingsOpen) { closeSettingsHTML(true); }
     lastSettingsOpen = sOpen;
   }
