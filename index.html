@@ -1167,6 +1167,7 @@ function winSweepStart(){
     if(winPos<=0){winPos=0;winDirM=1;}
     var m=multAt(winPos);
     document.getElementById('multPin').style.left=(winPos*100)+'%';
+    winAmt.textContent=WIN_BASE*m;                       // resultado ao vivo: 80/120/160/200
     claimBtn.innerHTML='&#127916; &#11088; X'+m;
   },16);
 }
@@ -1186,7 +1187,7 @@ function winLevel(){
   confetti(); // trava o snapshot: matar o app no modal NAO restaura o tabuleiro vencido
   for(var i=0;i<28;i++){var a=Math.random()*7,s=2+Math.random()*5;particles.push({x:cssW/2,y:cssH*0.4,vx:Math.cos(a)*s,vy:Math.sin(a)*s-3,life:1,r:3+Math.random()*3,color:COLORS[i%COLORS.length]});}
   try{cidiOnLevelCleared(S.level);}catch(e){} // task/tournament/medal
-  winAmt.textContent=WIN_BASE;claimBtn.disabled=false;
+  winAmt.textContent=WIN_BASE*2;claimBtn.disabled=false;
   winPos=0;winDirM=1;winSweepStart();
   win.style.display='flex';
 }
