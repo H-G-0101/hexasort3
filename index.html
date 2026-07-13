@@ -47,22 +47,9 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);font-family:system-ui,Arial,sans-serif;position:fixed;inset:0;width:100%;overscroll-behavior:none;touch-action:none}
   #game{position:relative;width:100vw;height:100vh;height:100dvh;max-width:520px;margin:0 auto}
   canvas{position:relative;z-index:2;display:block;width:100%;height:100%;touch-action:none}
-  .g-sky{position:absolute;inset:0;z-index:0;background:radial-gradient(130% 90% at 50% 12%,#22386e 0%,#15224a 45%,#0a1228 100%)}
-  .g-stars{position:absolute;inset:0;z-index:0;background-image:
-    radial-gradient(2px 2px at 12% 14%,rgba(255,255,255,.85),transparent 60%),
-    radial-gradient(1.5px 1.5px at 74% 8%,rgba(255,255,255,.75),transparent 60%),
-    radial-gradient(2px 2px at 90% 30%,rgba(255,255,255,.5),transparent 60%),
-    radial-gradient(1.5px 1.5px at 24% 40%,rgba(255,255,255,.55),transparent 60%),
-    radial-gradient(2px 2px at 58% 22%,rgba(255,255,255,.45),transparent 60%),
-    radial-gradient(1.5px 1.5px at 6% 66%,rgba(255,255,255,.5),transparent 60%),
-    radial-gradient(2px 2px at 86% 60%,rgba(255,255,255,.55),transparent 60%),
-    radial-gradient(1.5px 1.5px at 42% 76%,rgba(255,255,255,.4),transparent 60%),
-    radial-gradient(2px 2px at 66% 90%,rgba(255,255,255,.45),transparent 60%);
-    animation:gTwinkle 3s ease-in-out infinite alternate}
-  @keyframes gTwinkle{from{opacity:.5}to{opacity:1}}
+  .g-bg{position:absolute;inset:0;z-index:0;background:#0a1228 url('/bg_game.webp?v=1') center top/cover no-repeat}
   .g-glow{position:absolute;left:50%;top:36%;z-index:0;width:130vw;max-width:640px;aspect-ratio:1;transform:translate(-50%,-50%);
-    background:radial-gradient(circle,rgba(90,140,255,.16) 0%,rgba(90,140,255,.07) 40%,transparent 68%)}
-  .g-mount{position:absolute;left:0;right:0;bottom:0;z-index:0;width:100%;height:24%}
+    background:radial-gradient(circle,rgba(90,140,255,.14) 0%,rgba(90,140,255,.06) 40%,transparent 68%)}
   #praise{position:fixed;left:50%;top:34%;z-index:900;transform:translate(-50%,-50%);pointer-events:none;
     font-size:46px;font-weight:900;letter-spacing:1px;opacity:0;
     background:linear-gradient(180deg,#ffe9a8,#ffb347 55%,#ff7ac0);-webkit-background-clip:text;background-clip:text;color:transparent;
@@ -237,13 +224,8 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   #nextBtn{margin-top:14px;border:none;border-radius:16px;padding:15px 20px;font-size:19px;font-weight:800;color:#5c3d00;background:linear-gradient(180deg,#ffd54f,#fb9e00);cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.2);width:100%}
 </style></head><body>
 <div id="game">
-<div class="g-sky"></div>
-<div class="g-stars"></div>
+<div class="g-bg"></div>
 <div class="g-glow"></div>
-<svg class="g-mount" viewBox="0 0 420 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0,160 L0,96 L54,44 L96,88 L142,30 L198,92 L236,58 L290,110 L338,52 L386,98 L420,72 L420,160 Z" fill="#0d1730" opacity="0.85"/>
-  <path d="M0,160 L0,120 L40,86 L92,124 L150,74 L214,126 L262,96 L320,132 L372,92 L420,118 L420,160 Z" fill="#0a1226"/>
-</svg>
 <canvas id="cv"></canvas>
 <div id="hud">
   <div id="pill"><div class="inner"><span class="gem"></span><span class="amt" id="coinAmt">0</span></div></div>
@@ -392,7 +374,7 @@ var SND={put:'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjQxLjEw
 var _sndCache={};
 /* ===== BGM original (loop 28s) + vibracao ===== */
 var musicOn=true, vibrOn=true, musicVol=0.6;
-var BGM_SRC='bgm.mp3?v=1';
+var BGM_SRC='/bgm.mp3?v=1';
 var bgm=null,_bgmKicked=false;
 function _bgmSrcResolve(){ // arquivo externo (cacheavel); se falhar, o onerror tenta caminho nu
   return BGM_SRC;
@@ -400,7 +382,7 @@ function _bgmSrcResolve(){ // arquivo externo (cacheavel); se falhar, o onerror 
 function bgmApply(){
   try{
     if(!bgm){bgm=new Audio(BGM_SRC);bgm.loop=true;
-      bgm.onerror=function(){try{if(bgm.src.indexOf('?')>=0){bgm.src='bgm.mp3';bgm.load();if(musicVol>0.005)bgm.play().catch(function(){});}}catch(e){}};
+      bgm.onerror=function(){try{if(bgm.src.indexOf('?')>=0){bgm.src='/bgm.mp3';bgm.load();if(musicVol>0.005)bgm.play().catch(function(){});}}catch(e){}};
     }
     bgm.volume=musicVol;
     if(musicVol>0.005){musicOn=true;var p=bgm.play();if(p&&p.catch)p.catch(function(){});}
