@@ -146,7 +146,7 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   .sp-nova polygon{fill:#fff;filter:drop-shadow(0 0 10px #9fd0ff)}
   @keyframes spNova{0%,100%{opacity:.75}50%{opacity:1}}
   #hDaily{position:absolute;left:16px;top:84px;border:none;background:none;padding:0;cursor:pointer;font-size:34px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
-  #hRank{position:absolute;left:16px;top:130px;border:none;background:none;padding:0;cursor:pointer;font-size:32px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
+  #hRank{display:none;position:absolute;left:16px;top:130px;border:none;background:none;padding:0;cursor:pointer;font-size:32px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
   #hDaily .dd{position:absolute;top:-2px;right:-4px;width:14px;height:14px;border-radius:50%;background:#ff4757;border:2.5px solid #16264a;display:none;animation:ddp 1s ease-in-out infinite}
   @keyframes ddp{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
   .rk-soon{padding:34px 10px 26px;text-align:center}
@@ -222,8 +222,7 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   @keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
   #wincard h2{margin:8px 0;font-size:28px;color:#3cb527}#wincard .star{font-size:60px}
   #nextBtn{margin-top:14px;border:none;border-radius:16px;padding:15px 20px;font-size:19px;font-weight:800;color:#5c3d00;background:linear-gradient(180deg,#ffd54f,#fb9e00);cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.2);width:100%}
-</style><base target="_blank">
-</head><body>
+</style></head><body>
 <div id="game">
 <div class="g-bg"></div>
 <div class="g-glow"></div>
@@ -1639,7 +1638,7 @@ document.getElementById('dailyClaim').onclick=function(){
   if(!on)btn.style.display='none'; // sem ?debug=1 o flutuante comeca oculto; o botao da home liga
   document.body.appendChild(btn);
   var hb=document.createElement('button');hb.textContent='&#128295;'.length?'\uD83D\uDD27 debug':'debug';
-  hb.style.cssText='display:block;position:absolute;left:12px;bottom:12px;z-index:2100;border:1.5px solid rgba(140,180,245,.35);border-radius:10px;background:rgba(10,16,36,.55);color:#8fa6d9;font:700 12px system-ui;padding:7px 11px;opacity:.75';
+  hb.style.cssText='display:none;position:absolute;left:12px;bottom:12px;z-index:2100;border:1.5px solid rgba(140,180,245,.35);border-radius:10px;background:rgba(10,16,36,.55);color:#8fa6d9;font:700 12px system-ui;padding:7px 11px;opacity:.75';
   var hs=document.getElementById('homeS');if(hs)hs.appendChild(hb);
   hb.onclick=function(){btn.style.display='block';pan.style.display='block';refresh();};
   var pan=document.createElement('div');pan.id='dbgPanel';
