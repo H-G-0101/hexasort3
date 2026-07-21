@@ -87,15 +87,24 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   .boost .lk{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#ffd54f;font-weight:900;font-size:12px;text-shadow:0 1px 2px rgba(0,0,0,.6)}
   .boost .lk::before{content:'\1F512';font-size:17px}
   .boost.locked .lk{display:flex}
-  #homeS{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:linear-gradient(180deg,#1a2c55,#0f1a35)}
-  #homeS .h-title{font-size:44px;font-weight:900;color:#eaf2ff;text-align:center;line-height:1.05;text-shadow:0 4px 10px rgba(0,0,0,.5)}
-  #homeS .h-hex{width:110px;height:110px;background:conic-gradient(from 0deg,#f53b30,#fec130,#6cee1d,#26cbff,#e630ec,#f53b30);clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);box-shadow:0 10px 24px rgba(0,0,0,.25)}
-  #playBtn{position:relative;overflow:hidden;border:none;border-radius:20px;padding:16px 64px;font-size:26px;font-weight:900;color:#fff;cursor:pointer;background:linear-gradient(180deg,#6fdc4f,#3cb527);box-shadow:0 6px 0 rgba(0,0,0,.2)}
-  #playBtn::after{content:'';position:absolute;top:-20%;bottom:-20%;left:-45%;width:34%;
-    background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.55) 45%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.55) 55%,transparent 100%);
-    transform:skewX(-18deg);animation:playShine 2.6s ease-in-out infinite}
-  @keyframes playShine{0%{left:-45%}55%{left:130%}100%{left:130%}}
-  #homeS .h-lvl{font-size:21px;font-weight:900;color:#b9caf0;text-shadow:0 2px 4px rgba(0,0,0,.35)}
+  #homeS{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;background:linear-gradient(180deg,#1a2c55,#0f1a35)}
+  #homeS .h-title{font-size:38px;font-weight:900;color:#eaf2ff;text-align:center;line-height:1.05;text-shadow:0 4px 10px rgba(0,0,0,.5);margin:86px 0 0}
+  /* ===== LEVEL MAP (trilha de fases) ===== */
+  #lvWrap{flex:1;width:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-top:6px}
+  #lvWrap::-webkit-scrollbar{display:none}
+  #lvMap{display:flex;flex-direction:column;align-items:center;padding:30px 0 48px}
+  .lv-dot{width:9px;height:9px;border-radius:50%;background:#3d5590;margin:7px 0;box-shadow:inset 0 -2px 3px rgba(0,0,0,.35)}
+  .lv-node{position:relative;width:78px;height:66px;margin:18px 0;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 5px 0 rgba(0,0,0,.35))}
+  .lv-node::before,.lv-node::after{content:'';position:absolute;clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)}
+  .lv-node::before{inset:0;background:rgba(255,255,255,.22)} /* contorno claro, como o stroke das celulas */
+  .lv-node::after{inset:3px;background:linear-gradient(180deg,#5a6b93,#3c4a70)}
+  .lv-node span{position:relative;z-index:1;font-size:24px;font-weight:900;color:#dbe6ff;text-shadow:0 2px 3px rgba(0,0,0,.4)}
+  .lv-node.cur{cursor:pointer;animation:lvPulse 1.6s ease-in-out infinite}
+  .lv-node.cur::before{background:#d9ffcc}
+  .lv-node.cur::after{background:linear-gradient(180deg,#6fdc4f,#3cb527)}
+  .lv-node.cur span{color:#fff}
+  @keyframes lvPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+  .lv-banner{margin:10px 0 16px;padding:12px 46px;border-radius:16px;background:linear-gradient(180deg,#ffd54f,#f2a71b);border:3px solid #fff3c4;color:#fff;font-size:24px;font-weight:900;text-shadow:0 2px 3px rgba(0,0,0,.35);box-shadow:0 5px 0 rgba(0,0,0,.25);cursor:pointer}
   .m-progress{font-size:22px;font-weight:900;color:#e5893a;margin:6px 0 14px}
   .w-counter{display:inline-flex;align-items:center;gap:9px;font-size:36px;font-weight:900;color:#2d3348;margin:10px 0 14px}
   .w-counter .m-gem{width:34px;height:34px}
@@ -167,13 +176,28 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   .rk-lvl{font-size:14px;color:#3cb527}
   .rk-load{text-align:center;color:#8b96b3;padding:20px;font-weight:700}
   #rankMe{margin-top:10px;font-size:13px;font-weight:800;color:#c0863a;text-align:center;min-height:16px}
-  #dailyGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 14px}
-  .dtile{border-radius:12px;padding:8px 4px;background:#eef2fb;border:2px solid #d5ddf0;text-align:center}
-  .dtile .dd1{font-size:11px;font-weight:800;color:#8b96b3}
-  .dtile .dd2{font-size:15px;font-weight:900;color:#2d3348;margin-top:2px}
-  .dtile.done{background:#e4f6e6;border-color:#9ed8a4}
-  .dtile.done .dd2::after{content:' \2713';color:#3cb527}
-  .dtile.today{background:linear-gradient(180deg,#fff4d6,#ffe9ad);border-color:#ffc63e;box-shadow:0 0 0 2px rgba(255,198,62,.35)}
+  #dailyHead{display:flex;align-items:center;justify-content:center;gap:7px;margin:0 0 12px;font-size:15px;font-weight:900;color:#e5893a}
+  #dailyGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:4px 0 14px}
+  .dtile{position:relative;border-radius:14px;padding:9px 4px 8px;background:linear-gradient(180deg,#f2f5fc,#e3e9f6);border:2px solid #d5ddf0;text-align:center;overflow:hidden}
+  .dtile .dd1{font-size:10px;font-weight:800;color:#8b96b3;text-transform:uppercase;letter-spacing:.5px}
+  .dtile .dgem{width:26px;height:26px;margin:4px auto 2px;display:block;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+  .dtile .dd2{font-size:15px;font-weight:900;color:#2d3348}
+  .dtile.big{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;background:linear-gradient(135deg,#efe6ff,#d9c9ff);border-color:#b9a3f0}
+  .dtile.big .dgem{width:36px;height:36px;margin:0}
+  .dtile.big .dd1{font-size:12px;color:#8a6fd0}
+  .dtile.big .dd2{font-size:22px;color:#5b3fa8}
+  .dtile.done{background:linear-gradient(180deg,#e4f6e6,#d2efd6);border-color:#9ed8a4}
+  .dtile.done::after{content:'\2713';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#3cb527;background:rgba(228,246,230,.74)}
+  .dtile.today{background:linear-gradient(180deg,#fff4d6,#ffe9ad);border-color:#ffc63e;box-shadow:0 0 0 3px rgba(255,198,62,.4);animation:dtp 1.4s ease-in-out infinite}
+  .dtile.today .dd1{color:#c0863a}
+  @keyframes dtp{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+  #dailyClaim{position:relative;overflow:hidden}
+  #dailyClaim:disabled{background:linear-gradient(180deg,#b9c2d4,#8f9ab1);cursor:default;font-size:16px}
+  #dailyClaim:not(:disabled)::after{content:'';position:absolute;top:-20%;bottom:-20%;left:-45%;width:34%;background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.55) 45%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.55) 55%,transparent 100%);transform:skewX(-18deg);animation:dcs 2.4s ease-in-out infinite}
+  @keyframes dcs{0%{left:-45%}55%{left:130%}100%{left:130%}}
+  #dailyPlus,#shopPlus{position:absolute;left:50%;top:36%;transform:translateX(-50%);font-size:32px;font-weight:900;color:#3cb527;text-shadow:0 2px 4px rgba(0,0,0,.2);opacity:0;pointer-events:none;z-index:2}
+  #dailyPlus.go,#shopPlus.go{animation:dplus 1s ease-out forwards}
+  @keyframes dplus{0%{opacity:0;transform:translate(-50%,12px) scale(.6)}25%{opacity:1;transform:translate(-50%,-6px) scale(1.15)}100%{opacity:0;transform:translate(-50%,-48px) scale(1)}}
   .dtile.today .dd1{color:#c0863a}
   .sp-title{margin-top:10px;font-size:44px;font-weight:900;letter-spacing:2px;
     background:linear-gradient(180deg,#ffe9a8 10%,#ffb347 45%,#ff7ac0 100%);
@@ -199,9 +223,20 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   .m-gem{width:26px;height:26px;background:no-repeat center/contain}
   .m-gem.sm{width:20px;height:20px}
   .m-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .m-pack{background:#fff;border:2px solid #e8ecf5;border-radius:18px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
-  .m-pack .amt{font-size:19px;font-weight:900;color:#2d3348;display:flex;align-items:center;gap:5px}
+  .m-pack{position:relative;background:linear-gradient(180deg,#fff,#f2f5fc);border:2px solid #e0e6f2;border-radius:18px;padding:14px 8px 10px;display:flex;flex-direction:column;align-items:center;gap:7px}
+  .m-pack .amt{font-size:19px;font-weight:900;color:#2d3348;display:flex;align-items:center;gap:6px}
+  .m-pack .p-gem{filter:drop-shadow(0 2px 2px rgba(0,0,0,.18))}
+  .m-pack.best{grid-column:1/-1;background:linear-gradient(135deg,#efe6ff,#d9c9ff);border-color:#b9a3f0}
+  .m-pack.best .amt{font-size:24px;color:#5b3fa8}
+  .m-pack .ribbon{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,#ff9f43,#e5893a);color:#fff;font-size:10px;font-weight:900;letter-spacing:.6px;padding:3px 12px;border-radius:9px;text-transform:uppercase;white-space:nowrap;box-shadow:0 2px 5px rgba(0,0,0,.22)}
+  .m-pack.best .ribbon{background:linear-gradient(180deg,#9b6bff,#7c4dff)}
+  .p-prog{display:flex;gap:3px;width:82%;margin:-2px 0 1px}
+  .p-seg{flex:1;height:6px;border-radius:3px;background:#dfe5f1}
+  .m-pack.best .p-seg{background:rgba(255,255,255,.55)}
+  .p-seg.on{background:linear-gradient(90deg,#6fdc4f,#3cb527)}
   .m-pack button{border:none;border-radius:12px;padding:9px 12px;font-size:14px;font-weight:800;color:#fff;cursor:pointer;background:linear-gradient(180deg,#6fdc4f,#3cb527);box-shadow:0 3px 0 rgba(0,0,0,.16);width:100%}
+  .m-pack.best button{position:relative;overflow:hidden;font-size:16px;padding:11px 12px}
+  .m-pack.best button::after{content:'';position:absolute;top:-20%;bottom:-20%;left:-45%;width:34%;background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.55) 45%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.55) 55%,transparent 100%);transform:skewX(-18deg);animation:dcs 2.4s ease-in-out infinite}
   .m-icon{width:64px;height:64px;object-fit:contain;margin:4px 0}
   .m-stepper{display:flex;align-items:center;justify-content:center;gap:16px;margin:8px 0}
   .m-arrow{width:46px;height:46px;border:none;border-radius:14px;background:linear-gradient(180deg,#7c4dff,#448aff);color:#fff;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 3px 0 #30267a}
@@ -307,12 +342,11 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
   <button id="hDaily">&#127873;<span class="dd" id="dailyDot"></span></button>
   <button id="hRank">&#127942;</button>
   <div class="h-title">HEXANOVA</div>
-  <div class="h-hex"></div>
-  <button id="playBtn">PLAY</button>
-  <div class="h-lvl" id="homeLvl">Level 1</div>
+  <div id="lvWrap"><div id="lvMap"></div></div>
 </div>
 <div id="shopM" class="modal"><div class="m-card">
   <button class="m-close" data-close="shopM">&#10005;</button>
+  <span id="shopPlus"></span>
   <div class="m-eyebrow">Get more</div><div class="m-title">Diamonds</div>
   <div class="m-balance"><span class="m-gem"></span><span id="shopBal">0</span></div>
   <div class="m-grid" id="shopGrid"></div>
@@ -350,8 +384,10 @@ window.__cidiEnsureLogin=(function(){var p=null;return function(){
 </div></div>
 <div id="dailyM" class="modal"><div class="m-card">
   <button class="m-close" data-close="dailyM">&#10005;</button>
+  <span id="dailyPlus"></span>
   <div class="m-eyebrow">Daily bonus</div>
-  <div class="m-title">Come back every day!</div>
+  <div class="m-title">&#127873; Come back every day!</div>
+  <div id="dailyHead"></div>
   <div id="dailyGrid"></div>
   <button id="dailyClaim" class="m-btn">Claim</button>
 </div></div>
@@ -1300,31 +1336,38 @@ document.querySelectorAll('.m-close').forEach(function(b){b.onclick=function(){d
 var SHOP_ADS={100:1,250:2,500:5,1000:8};
 function shopProgGet(){try{return JSON.parse(localStorage.getItem('hss2')||'{}').adProg||{};}catch(e){return{};}}
 function shopProgPut(p){try{var s=JSON.parse(localStorage.getItem('hss2')||'{}');s.adProg=p;localStorage.setItem('hss2',JSON.stringify(s));}catch(e){}}
-function shopBtnLabel(n){
-  var need=SHOP_ADS[n]||1, got=shopProgGet()['p'+n]||0;
-  return need===1?'\uD83C\uDFAC Watch ad':('\uD83C\uDFAC '+got+'/'+need);
-}
-function openShop(){shopBal.textContent=S.coins;
+function shopRender(){shopBal.textContent=S.coins;
   var g=document.getElementById('shopGrid');g.innerHTML='';
-  SHOP_PACKS.forEach(function(n){
-    var d=document.createElement('div');d.className='m-pack';
-    d.innerHTML='<div class="amt"><span class="m-gem sm" style="background-image:url('+"'"+ART.gem+"'"+')"></span>+'+n+'</div>';
-    var b=document.createElement('button');b.textContent=shopBtnLabel(n);
+  SHOP_PACKS.forEach(function(n,idx){
+    var need=SHOP_ADS[n]||1, got=shopProgGet()['p'+n]||0;
+    var d=document.createElement('div');d.className='m-pack'+(n===1000?' best':'');
+    var gs=[24,28,32,40][idx]||26; // gem cresce com o pacote
+    var rib=n===500?'<div class="ribbon">Popular</div>':(n===1000?'<div class="ribbon">&#11088; Best value</div>':'');
+    d.innerHTML=rib+'<div class="amt"><img class="p-gem" style="width:'+gs+'px;height:'+gs+'px" src="'+ART.gem+'">+'+n+'</div>';
+    if(need>1){ // barra de progresso dos ads no lugar do texto X/N
+      var pr=document.createElement('div');pr.className='p-prog';
+      for(var i=0;i<need;i++){var sg=document.createElement('i');sg.className='p-seg'+(i<got?' on':'');pr.appendChild(sg);}
+      d.appendChild(pr);
+    }
+    var b=document.createElement('button');b.textContent='\uD83C\uDFAC Watch ad';
     b.onclick=function(){b.disabled=true;b.textContent='Loading...';
       showRewardedAd(function(){
-        var need=SHOP_ADS[n]||1, prog=shopProgGet(), k='p'+n;
+        var prog=shopProgGet(), k='p'+n;
         prog[k]=(prog[k]||0)+1;
         if(prog[k]>=need){                       // completou a sequencia: paga e zera
           prog[k]=0;shopProgPut(prog);
-          S.coins+=n;save();updateCoins();shopBal.textContent=S.coins;sfx(900);refreshBuyIfOpen();
-        }else{shopProgPut(prog);sfx(760);}       // progrediu: botao mostra X/N
-        b.disabled=false;b.textContent=shopBtnLabel(n);
+          S.coins+=n;save();updateCoins();sfx(900);refreshBuyIfOpen();
+          var p=document.getElementById('shopPlus');p.textContent='+'+n+' \uD83D\uDC8E';
+          p.classList.remove('go');void p.offsetWidth;p.classList.add('go');
+        }else{shopProgPut(prog);sfx(760);}       // progrediu: segmento acende
+        shopRender();
       },
-      function(){b.disabled=false;b.textContent=shopBtnLabel(n);});
+      function(){shopRender();});
     };
     d.appendChild(b);g.appendChild(d);
   });
-  document.getElementById('shopM').style.display='flex';}
+}
+function openShop(){shopRender();document.getElementById('shopM').style.display='flex';}
 document.getElementById('pill').onclick=openShop;
 document.getElementById('hPill').onclick=openShop; // pilula da home abre a loja tambem
 
@@ -1437,9 +1480,29 @@ hGear.onclick=function(){var m=document.getElementById('setM');m.classList.add('
 
 
 /* ===== HOME / SPLASH ===== */
-function showHome(){homeLvl.textContent='Level '+S.level;document.getElementById('homeS').style.display='flex';}
+function startPlay(){hideHome();sfx(760);}
+function lvVisibleMax(){return Math.floor(S.level/10)*10+20;} // 20 fases visiveis; Lv.10 -> 30, Lv.20 -> 40...
+function buildLvMap(){
+  var map=document.getElementById('lvMap');if(!map)return;map.innerHTML='';
+  var max=lvVisibleMax();
+  for(var n=max;n>=S.level;n--){ // so a fase atual pra cima (concluidas nao aparecem)
+    var d=document.createElement('div');
+    d.className='lv-node'+(n===S.level?' cur':'');
+    var s=document.createElement('span');s.textContent=n;if(n>=100)s.style.fontSize='19px';
+    d.appendChild(s);
+    if(n===S.level)d.onclick=startPlay;
+    map.appendChild(d);
+    if(n===S.level){ // banner "Level N" logo abaixo do losango atual (tambem inicia o jogo)
+      var b=document.createElement('div');b.className='lv-banner';b.id='homeLvl';
+      b.textContent='Level '+S.level;b.onclick=startPlay;map.appendChild(b);
+    }
+    if(n>S.level){for(var k=0;k<3;k++){var o=document.createElement('div');o.className='lv-dot';map.appendChild(o);}}
+  }
+  var wrap=document.getElementById('lvWrap');
+  if(wrap)wrap.scrollTop=wrap.scrollHeight; // atual fica embaixo, proximas sobem
+}
+function showHome(){document.getElementById('homeS').style.display='flex';buildLvMap();}
 function hideHome(){document.getElementById('homeS').style.display='none';}
-playBtn.onclick=function(){hideHome();sfx(760);};
 setHome.onclick=function(){document.getElementById('setM').style.display='none';showHome();};
 setRetry.onclick=function(){document.getElementById('setM').style.display='none';document.getElementById('retryM').style.display='flex';};
 rtNo.onclick=function(){document.getElementById('retryM').style.display='none';};
@@ -1536,7 +1599,7 @@ function bootGame(){
   reloadPersistedState();
   tutHandImg=new Image();tutHandImg.src=ART.hand;
   resize();loadLevel(S.level);requestAnimationFrame(loop);
-  try{document.querySelector('#homeS .h-lvl').textContent='Level '+S.level;}catch(e){}
+  try{buildLvMap();}catch(e){}
   try{cidiBoot();}catch(e){} // login + reflush tournament + medalOwnership, tudo fail-open
   try{dailyRefreshDot();}catch(e){}
 }
@@ -1615,16 +1678,23 @@ function dailyRefreshDot(){try{document.getElementById('dailyDot').style.display
 function dailyRender(){
   var d=dailyGet(), claim=dailyClaimable(), ns=dailyNextStreak();
   var pos=((claim?ns:d.streak)-1)%7; if(pos<0)pos=0;
+  var shown=claim?ns:d.streak;
+  var h=document.getElementById('dailyHead');
+  h.innerHTML=shown>1?('&#128293; '+shown+' day streak!'):'Start your streak today!';
   var g=document.getElementById('dailyGrid');g.innerHTML='';
   for(var i=0;i<7;i++){
-    var t=document.createElement('div');t.className='dtile';
+    var t=document.createElement('div');t.className='dtile'+(i===6?' big':'');
     if(i<pos||(!claim&&i===pos))t.className+=' done';
     else if(claim&&i===pos)t.className+=' today';
-    t.innerHTML='<div class="dd1">Day '+(i+1)+'</div><div class="dd2">&#128142;'+DAILY_R[i]+'</div>';
+    if(i===6){ // dia 7 = premio grande, largura cheia
+      t.innerHTML='<img class="dgem" src="'+ART.gem+'"><div><div class="dd1">Day 7 &#8226; Big prize</div><div class="dd2">'+DAILY_R[6]+'</div></div>';
+    }else{
+      t.innerHTML='<div class="dd1">'+(claim&&i===pos?'Today':'Day '+(i+1))+'</div><img class="dgem" src="'+ART.gem+'"><div class="dd2">'+DAILY_R[i]+'</div>';
+    }
     g.appendChild(t);
   }
   var b=document.getElementById('dailyClaim');
-  b.disabled=!claim;b.textContent=claim?('Claim \uD83D\uDC8E'+DAILY_R[pos]):'Come back tomorrow!';
+  b.disabled=!claim;b.textContent=claim?('Claim \uD83D\uDC8E'+DAILY_R[pos]):'\u2713 Claimed \u2022 come back tomorrow!';
 }
 hDaily.onclick=function(){dailyRender();document.getElementById('dailyM').style.display='flex';};
 document.getElementById('dailyClaim').onclick=function(){
@@ -1632,6 +1702,8 @@ document.getElementById('dailyClaim').onclick=function(){
   var ns=dailyNextStreak(), reward=DAILY_R[(ns-1)%7];
   dailyPut({last:dailyToday(),streak:ns});
   S.coins+=reward;save();updateCoins();playSnd('right');
+  var p=document.getElementById('dailyPlus');p.textContent='+'+reward+' \uD83D\uDC8E';
+  p.classList.remove('go');void p.offsetWidth;p.classList.add('go'); // reinicia a animacao
   dailyRender();dailyRefreshDot();
 };
 /* ===== CiDi DEBUG PANEL (ativar com ?debug=1 ou #debug na URL) ===== */
