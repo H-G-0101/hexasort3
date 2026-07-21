@@ -1247,9 +1247,20 @@ function showRewardedAd(onReward,onFail){
     if(window.CiDiSDK&&window.CiDiSDK.showRewardedAd){
       window.__adMode='real';
       window.CiDiSDK.showRewardedAd().then(function(r){
-        done(!!(r&&r.success===true));
+        window.__adLast={phase:'resolved',result:r};
+        var okk=!!(r&&r.success===true);
+        console.warn('[cidi] rewarded ad resolveu: success='+(r&&r.success)+
+          ' | verify='+(r&&(r.verify||r.verified||r.verifyStatus))+
+          ' | error='+(r&&(r.error||r.errorCode||r.code))+
+          ' | msg='+(r&&(r.message||r.msg))+
+          ' | raw='+JSON.stringify(r));
+        done(okk);
       }).catch(function(e){
-        console.warn('[cidi] rewarded ad falhou:',(e&&(e.error||e.code))||'?',(e&&e.message)||'');
+        window.__adLast={phase:'rejected',error:e};
+        console.warn('[cidi] rewarded ad REJEITOU:',
+          'code='+(e&&(e.error||e.errorCode||e.code))+
+          ' | msg='+(e&&(e.message||e.msg))+
+          ' | raw='+(function(){try{return JSON.stringify(e,Object.getOwnPropertyNames(e));}catch(_){return String(e);}})());
         done(false);
       });
     }else{
@@ -1625,7 +1636,7 @@ document.getElementById('dailyClaim').onclick=function(){
 };
 /* ===== CiDi DEBUG PANEL (ativar com ?debug=1 ou #debug na URL) ===== */
 (function(){
-  var on=/[?&#]debug(=1|\b)/.test(location.search+location.hash);
+  var on=true; // debug ativado temporariamente p/ diagnostico de ads
   var logs=[];
   function dlog(){var s=[].map.call(arguments,function(a){try{return typeof a==='string'?a:JSON.stringify(a);}catch(e){return String(a);}}).join(' ');
     logs.push(new Date().toTimeString().slice(0,8)+' '+s);if(logs.length>80)logs.shift();
@@ -1635,10 +1646,10 @@ document.getElementById('dailyClaim').onclick=function(){
     console[k]=function(){try{var s=String(arguments[0]);if(s.indexOf('[cidi]')>=0)dlog.apply(null,arguments);}catch(e){}orig.apply(null,arguments);};});
   var btn=document.createElement('button');btn.textContent='DBG';btn.id='dbgBtn';
   btn.style.cssText='position:fixed;right:8px;bottom:8px;z-index:7000;width:52px;height:38px;border:none;border-radius:10px;background:#c62868;color:#fff;font-weight:900;box-shadow:0 3px 8px rgba(0,0,0,.4)';
-  if(!on)btn.style.display='none'; // sem ?debug=1 o flutuante comeca oculto; o botao da home liga
+  // DBG visivel (debug temporario ativo)
   document.body.appendChild(btn);
   var hb=document.createElement('button');hb.textContent='&#128295;'.length?'\uD83D\uDD27 debug':'debug';
-  hb.style.cssText='display:none;position:absolute;left:12px;bottom:12px;z-index:2100;border:1.5px solid rgba(140,180,245,.35);border-radius:10px;background:rgba(10,16,36,.55);color:#8fa6d9;font:700 12px system-ui;padding:7px 11px;opacity:.75';
+  hb.style.cssText='position:absolute;left:12px;bottom:12px;z-index:2100;border:1.5px solid rgba(140,180,245,.35);border-radius:10px;background:rgba(10,16,36,.55);color:#8fa6d9;font:700 12px system-ui;padding:7px 11px;opacity:.75';
   var hs=document.getElementById('homeS');if(hs)hs.appendChild(hb);
   hb.onclick=function(){btn.style.display='block';pan.style.display='block';refresh();};
   var pan=document.createElement('div');pan.id='dbgPanel';
@@ -1675,7 +1686,17 @@ document.getElementById('dailyClaim').onclick=function(){
   btn.onclick=function(){pan.style.display=pan.style.display==='none'?'block':'none';if(pan.style.display==='block')refresh();};
   setInterval(function(){if(pan.style.display==='block')refresh();},1000);
   document.getElementById('dbgAd').onclick=function(){dlog('[cidi] dbg: testando rewarded ad...');
-    showRewardedAd(function(){dlog('[cidi] dbg: AD SUCESSO (reward)'+(window.__adMode==='fallback'?' [SIMULADO - FALLBACK DEV]':' [REAL]'));},function(){dlog('[cidi] dbg: AD FALHOU'+(window.__adMode==='fallback'?' [SIMULADO]':' [REAL]'));});};
+    window.__adLast=null;
+    showRewardedAd(
+      function(){dlog('[cidi] dbg: AD SUCESSO'+(window.__adMode==='fallback'?' [SIMULADO]':' [REAL]'));
+        if(window.__adLast)dlog('[cidi] dbg: retorno = '+JSON.stringify(window.__adLast.result||window.__adLast));},
+      function(){dlog('[cidi] dbg: AD FALHOU'+(window.__adMode==='fallback'?' [SIMULADO]':' [REAL]'));
+        var L=window.__adLast;
+        if(L){ if(L.phase==='rejected'){var e=L.error;
+            dlog('  -> REJEITOU code='+(e&&(e.error||e.errorCode||e.code))+' msg='+(e&&(e.message||e.msg)));
+            try{dlog('  -> raw='+JSON.stringify(e,Object.getOwnPropertyNames(e)));}catch(_){}}
+          else{dlog('  -> success='+(L.result&&L.result.success)+' verify='+(L.result&&(L.result.verify||L.result.verified))+' raw='+JSON.stringify(L.result));}
+        }else dlog('  -> (sem retorno capturado; SDK ausente?)');});};
   document.getElementById('dbgTask').onclick=function(){dlog('[cidi] dbg: force task');
     var f=window.__cidiReport.flags();f.taskDate='';cidiSaveFlags();cidiOnLevelCleared(S.level);};
   document.getElementById('dbgTour').onclick=function(){var lvl=S.level+ (Math.max(0,cidiFlags.tourBest-S.level)+1);
