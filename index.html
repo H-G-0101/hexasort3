@@ -1648,7 +1648,7 @@ document.getElementById('dailyClaim').onclick=function(){
   btn.style.cssText='position:fixed;right:8px;bottom:8px;z-index:7000;width:52px;height:38px;border:none;border-radius:10px;background:#c62868;color:#fff;font-weight:900;box-shadow:0 3px 8px rgba(0,0,0,.4)';
   // DBG visivel (debug temporario ativo)
   document.body.appendChild(btn);
-  var hb=document.createElement('button');hb.textContent='&#128295;'.length?'\uD83D\uDD27 debug':'debug';
+  var hb=document.createElement('button');hb.textContent='\uD83D\uDD27 debug';
   hb.style.cssText='position:absolute;left:12px;bottom:12px;z-index:2100;border:1.5px solid rgba(140,180,245,.35);border-radius:10px;background:rgba(10,16,36,.55);color:#8fa6d9;font:700 12px system-ui;padding:7px 11px;opacity:.75';
   var hs=document.getElementById('homeS');if(hs)hs.appendChild(hb);
   hb.onclick=function(){btn.style.display='block';pan.style.display='block';refresh();};
@@ -1670,49 +1670,49 @@ document.getElementById('dailyClaim').onclick=function(){
   document.head.appendChild(st);
   function refresh(){
     var lines=[];
-    lines.push('STORAGE  gate='+(window.__cidiStorageOK?'OK':'no')+' | CiDiSDK='+(window.CiDiSDK?'presente':'AUSENTE'));
-    try{localStorage.setItem('__dbg_t','1');lines.push('localStorage RW = OK | save hss2 = '+(localStorage.getItem('hss2')?'presente':'vazio'));}
-    catch(e){lines.push('localStorage RW = FALHOU: '+e.message);}
-    lines.push('LOGIN    ok='+(window.__cidiLoginOK?'SIM':'nao')+' | client='+(window.__cidiClient?'presente':'ausente')+' | proxySDK='+(window.CidiProxySDK?'carregado':'AUSENTE'));
-    lines.push('AD       CiDiSDK.showRewardedAd='+((window.CiDiSDK&&window.CiDiSDK.showRewardedAd)?'presente':'AUSENTE (fallback dev)'));
+    lines.push('STORAGE  gate='+(window.__cidiStorageOK?'OK':'no')+' | CiDiSDK='+(window.CiDiSDK?'present':'MISSING'));
+    try{localStorage.setItem('__dbg_t','1');lines.push('localStorage RW = OK | save hss2 = '+(localStorage.getItem('hss2')?'present':'empty'));}
+    catch(e){lines.push('localStorage RW = FAILED: '+e.message);}
+    lines.push('LOGIN    ok='+(window.__cidiLoginOK?'YES':'no')+' | client='+(window.__cidiClient?'present':'absent')+' | proxySDK='+(window.CidiProxySDK?'loaded':'MISSING'));
+    lines.push('AD       CiDiSDK.showRewardedAd='+((window.CiDiSDK&&window.CiDiSDK.showRewardedAd)?'present':'MISSING (dev fallback)'));
     try{var f=window.__cidiReport.flags(),inf=window.__cidiReport.inflight();
       lines.push('TASK     taskDate='+(f.taskDate||'-')+' (hoje='+cidiBizDate()+') inflight='+inf.task);
       lines.push('TOURNAM  best='+f.tourBest+' pending='+f.tourPending+' inflight='+inf.tour);
       lines.push('MEDAL    owned='+f.medalOwned+' inflight='+inf.medal+' | meta=level '+MEDAL_LEVEL+' | atual='+S.level);
     }catch(e){lines.push('report: '+e.message);}
-    lines.push('URL tempToken='+(/[?&]tempToken=/.test(location.search)?'presente':'AUSENTE'));
+    lines.push('URL tempToken='+(/[?&]tempToken=/.test(location.search)?'present':'MISSING'));
     document.getElementById('dbgStat').textContent=lines.join('\n');
   }
   btn.onclick=function(){pan.style.display=pan.style.display==='none'?'block':'none';if(pan.style.display==='block')refresh();};
   setInterval(function(){if(pan.style.display==='block')refresh();},1000);
-  document.getElementById('dbgAd').onclick=function(){dlog('[cidi] dbg: testando rewarded ad...');
+  document.getElementById('dbgAd').onclick=function(){dlog('[cidi] dbg: testing rewarded ad...');
     window.__adLast=null;
     showRewardedAd(
-      function(){dlog('[cidi] dbg: AD SUCESSO'+(window.__adMode==='fallback'?' [SIMULADO]':' [REAL]'));
-        if(window.__adLast)dlog('[cidi] dbg: retorno = '+JSON.stringify(window.__adLast.result||window.__adLast));},
-      function(){dlog('[cidi] dbg: AD FALHOU'+(window.__adMode==='fallback'?' [SIMULADO]':' [REAL]'));
+      function(){dlog('[cidi] dbg: AD SUCCESS'+(window.__adMode==='fallback'?' [SIMULATED]':' [REAL]'));
+        if(window.__adLast)dlog('[cidi] dbg: result = '+JSON.stringify(window.__adLast.result||window.__adLast));},
+      function(){dlog('[cidi] dbg: AD FAILED'+(window.__adMode==='fallback'?' [SIMULATED]':' [REAL]'));
         var L=window.__adLast;
         if(L){ if(L.phase==='rejected'){var e=L.error;
-            dlog('  -> REJEITOU code='+(e&&(e.error||e.errorCode||e.code))+' msg='+(e&&(e.message||e.msg)));
+            dlog('  -> REJECTED code='+(e&&(e.error||e.errorCode||e.code))+' msg='+(e&&(e.message||e.msg)));
             try{dlog('  -> raw='+JSON.stringify(e,Object.getOwnPropertyNames(e)));}catch(_){}}
           else{dlog('  -> success='+(L.result&&L.result.success)+' verify='+(L.result&&(L.result.verify||L.result.verified))+' raw='+JSON.stringify(L.result));}
-        }else dlog('  -> (sem retorno capturado; SDK ausente?)');});};
-  document.getElementById('dbgTask').onclick=function(){dlog('[cidi] dbg: force task');
+        }else dlog('  -> (no result captured; SDK missing?)');});};
+  document.getElementById('dbgTask').onclick=function(){dlog('[cidi] dbg: force TASK');
     var f=window.__cidiReport.flags();f.taskDate='';cidiSaveFlags();cidiOnLevelCleared(S.level);};
   document.getElementById('dbgTour').onclick=function(){var lvl=S.level+ (Math.max(0,cidiFlags.tourBest-S.level)+1);
-    dlog('[cidi] dbg: force tournament score='+(cidiFlags.tourBest+1));cidiReportTournament(cidiFlags.tourBest+1);};
-  document.getElementById('dbgMedal').onclick=function(){dlog('[cidi] dbg: force medal (ignora nivel)');
+    dlog('[cidi] dbg: force TOURNAMENT score='+(cidiFlags.tourBest+1));cidiReportTournament(cidiFlags.tourBest+1);};
+  document.getElementById('dbgMedal').onclick=function(){dlog('[cidi] dbg: force MEDAL (ignores level)');
     cidiFlags.medalOwned=false;cidiSaveFlags();cidiClaimMedal();};
-  document.getElementById('dbgOwn').onclick=function(){dlog('[cidi] dbg: consultando medalOwnership...');
-    window.__cidiEnsureLogin().then(function(c){if(!c){dlog('[cidi] dbg: sem client');return;}
-      c.report.medalOwnership().then(function(r){dlog('[cidi] dbg: ownership =',r);}).catch(function(e){dlog('[cidi] dbg: ownership ERRO',e&&e.code,e&&e.message);});});};
+  document.getElementById('dbgOwn').onclick=function(){dlog('[cidi] dbg: querying medalOwnership...');
+    window.__cidiEnsureLogin().then(function(c){if(!c){dlog('[cidi] dbg: no client');return;}
+      c.report.medalOwnership().then(function(r){dlog('[cidi] dbg: ownership =',r);}).catch(function(e){dlog('[cidi] dbg: ownership ERROR',e&&e.code,e&&e.message);});});};
   document.getElementById('dbgStore').onclick=function(){
     try{var k='__dbg_rw',v=String(Date.now());localStorage.setItem(k,v);
-      dlog('[cidi] dbg: storage write/read '+(localStorage.getItem(k)===v?'OK':'DIVERGIU'));}
-    catch(e){dlog('[cidi] dbg: storage ERRO '+e.message);}};
+      dlog('[cidi] dbg: storage write/read '+(localStorage.getItem(k)===v?'OK':'MISMATCH'));}
+    catch(e){dlog('[cidi] dbg: storage ERROR '+e.message);}};
   document.getElementById('dbgLogin').onclick=function(){dlog('[cidi] dbg: login...');
-    window.__cidiEnsureLogin().then(function(c){dlog('[cidi] dbg: login retornou client='+(c?'OK':'null'));});};
-  document.getElementById('dbgReset').onclick=function(){window.__cidiReport.reset();dlog('[cidi] dbg: flags resetadas');};
+    window.__cidiEnsureLogin().then(function(c){dlog('[cidi] dbg: login returned client='+(c?'OK':'null'));});};
+  document.getElementById('dbgReset').onclick=function(){window.__cidiReport.reset();dlog('[cidi] dbg: flags reset');};
 })();
 
 </script></body></html>
