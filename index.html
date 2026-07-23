@@ -1333,10 +1333,14 @@ function flashNoCoins(c){ // pisca vermelho no preco
   tween(400,function(t){return t;},function(p){c._noCoin=1-p;},function(){c._noCoin=0;});
 }
 function watchAdUnlock(c){
+  var lcol=c.col, lcj=c.cj;   // guarda a POSICAO, nao o objeto: layout() recria a board no resize
   showRewardedAd(function(){
-    c.adLock=false; sfx(700);
+    var cell=null;            // relocaliza a celula (o ad pode ter disparado resize -> board nova)
+    for(var q=0;q<S.board.length;q++){if(S.board[q].col===lcol&&S.board[q].cj===lcj){cell=S.board[q];break;}}
+    if(!cell)return;
+    cell.adLock=false; sfx(700);
     // pequeno flash de desbloqueio
-    for(var i=0;i<14;i++){var a=Math.random()*7,s=1+Math.random()*3;particles.push({x:c.x,y:c.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1.5,life:1,r:2+Math.random()*3,color:'#ffd54f'});}
+    for(var i=0;i<14;i++){var a=Math.random()*7,s=1+Math.random()*3;particles.push({x:cell.x,y:cell.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-1.5,life:1,r:2+Math.random()*3,color:'#ffd54f'});}
     save();saveMid();
   }, function(){ /* falhou: mantem bloqueada */ });
 }
