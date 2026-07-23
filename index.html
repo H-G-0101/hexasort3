@@ -1721,7 +1721,7 @@ document.getElementById('dailyClaim').onclick=function(){
 };
 /* ===== CiDi DEBUG PANEL (ativar com ?debug=1 ou #debug na URL) ===== */
 (function(){
-  var on=true; // debug ativado temporariamente p/ diagnostico de ads
+  var on=/[?&]debug=1/.test(location.search)||location.hash.indexOf('debug')>=0; // so via URL (CiDi resolveu os ads)
   var logs=[];
   function dlog(){var s=[].map.call(arguments,function(a){try{return typeof a==='string'?a:JSON.stringify(a);}catch(e){return String(a);}}).join(' ');
     logs.push(new Date().toTimeString().slice(0,8)+' '+s);if(logs.length>80)logs.shift();
@@ -1731,10 +1731,11 @@ document.getElementById('dailyClaim').onclick=function(){
     console[k]=function(){try{var s=String(arguments[0]);if(s.indexOf('[cidi]')>=0)dlog.apply(null,arguments);}catch(e){}orig.apply(null,arguments);};});
   var btn=document.createElement('button');btn.textContent='DBG';btn.id='dbgBtn';
   btn.style.cssText='position:fixed;right:8px;bottom:8px;z-index:7000;width:52px;height:38px;border:none;border-radius:10px;background:#c62868;color:#fff;font-weight:900;box-shadow:0 3px 8px rgba(0,0,0,.4)';
-  // DBG visivel (debug temporario ativo)
+  if(!on)btn.style.display='none'; // escondido em producao
   document.body.appendChild(btn);
   var hb=document.createElement('button');hb.textContent='\uD83D\uDD27 debug';
   hb.style.cssText='position:absolute;left:12px;bottom:12px;z-index:2100;border:1.5px solid rgba(140,180,245,.35);border-radius:10px;background:rgba(10,16,36,.55);color:#8fa6d9;font:700 12px system-ui;padding:7px 11px;opacity:.75';
+  if(!on)hb.style.display='none'; // escondido em producao
   var hs=document.getElementById('homeS');if(hs)hs.appendChild(hb);
   hb.onclick=function(){btn.style.display='block';pan.style.display='block';refresh();};
   var pan=document.createElement('div');pan.id='dbgPanel';
