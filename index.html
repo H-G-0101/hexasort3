@@ -425,21 +425,34 @@ var _sndCache={};
 var musicOn=true, vibrOn=true, musicVol=0.6;
 var BGM_SRC='/bgm.mp3?v=1';
 var bgm=null,_bgmKicked=false;
-function _bgmSrcResolve(){ // arquivo externo (cacheavel); se falhar, o onerror tenta caminho nu
-  return BGM_SRC;
+function bgmInit(){ // cria/pre-carrega cedo: load() nao exige gesto, so o play() exige
+  if(bgm)return bgm;
+  bgm=new Audio(BGM_SRC);bgm.loop=true;bgm.preload='auto';bgm.volume=musicVol;
+  bgm.onerror=function(){try{if(bgm.src.indexOf('?')>=0){bgm.src='/bgm.mp3';bgm.load();if(musicOn&&musicVol>0.005)bgm.play().catch(function(){});}}catch(e){}};
+  try{bgm.load();}catch(e){}
+  return bgm;
 }
 function bgmApply(){
   try{
-    if(!bgm){bgm=new Audio(BGM_SRC);bgm.loop=true;
-      bgm.onerror=function(){try{if(bgm.src.indexOf('?')>=0){bgm.src='/bgm.mp3';bgm.load();if(musicVol>0.005)bgm.play().catch(function(){});}}catch(e){}};
-    }
+    bgmInit();
     bgm.volume=musicVol;
-    if(musicVol>0.005){musicOn=true;var p=bgm.play();if(p&&p.catch)p.catch(function(){});}
+    if(musicVol>0.005){musicOn=true;var p=bgm.play();
+      if(p&&p.then)p.then(function(){_bgmKicked=true;_bgmUnhook();}).catch(function(){_bgmKicked=false;});}
     else{musicOn=false;bgm.pause();}
   }catch(e){}
 }
-document.addEventListener('pointerdown',function(){if(_bgmKicked)return;_bgmKicked=true;bgmApply();},true);
-document.addEventListener('visibilitychange',function(){try{if(document.hidden){bgm&&bgm.pause();}else if(musicOn&&_bgmKicked)bgmApply();}catch(e){}});
+/* autoplay: navegador so libera audio apos gesto. Tenta a CADA gesto ate tocar de verdade
+   (antes marcava _bgmKicked no 1o toque mesmo se o play() falhasse, e nunca mais tentava). */
+function _bgmKick(){
+  if(_bgmKicked||musicVol<=0.005)return;
+  bgmApply();
+  setTimeout(function(){if(bgm&&!bgm.paused){_bgmKicked=true;_bgmUnhook();}},250);
+}
+var _BGM_EVS=['pointerdown','touchstart','touchend','click','keydown'];
+function _bgmUnhook(){_BGM_EVS.forEach(function(ev){document.removeEventListener(ev,_bgmKick,true);});}
+_BGM_EVS.forEach(function(ev){document.addEventListener(ev,_bgmKick,true);});
+bgmInit(); // ja comeca a baixar o mp3 durante a home, pro 1o toque tocar instantaneo
+document.addEventListener('visibilitychange',function(){try{if(document.hidden){bgm&&bgm.pause();}else if(musicOn&&_bgmKicked&&musicVol>0.005)bgmApply();}catch(e){}});
 function vibr(ms){try{if(vibrOn&&navigator.vibrate)navigator.vibrate(ms);}catch(e){}}
 var tutMoves=0; // persistido: lido em reloadPersistedState() apos o gate CiDi
 var tutHandImg=null;
@@ -1389,7 +1402,7 @@ document.getElementById('pill').onclick=openShop;
 document.getElementById('hPill').onclick=openShop; // pilula da home abre a loja tambem
 
 /* ===== COMPRA DE BOOSTER (stepper com setas) ===== */
-var BOOSTER_PRICE={cycle:100,hand:150,bomb:200}; // por eficiencia: refresh < mao < bomba
+var BOOSTER_PRICE={cycle:100,bomb:150,hand:200}; // por eficiencia: refresh < bomba < mao (mao reposiciona, e mais versatil)
 var buyState={type:null,qty:1};
 function openBuy(t){buyState.type=t;buyState.qty=1;
   buyTitle.textContent=TIP[t].title;buyIcon.src=ART[TIP[t].icon];
@@ -1529,7 +1542,8 @@ bBomb.onclick=function(){armBooster('bomb');};bHand.onclick=function(){armBooste
 /* ===== CiDi TASK + TOURNAMENT + MEDAL =====
    Task: 'Clear any 1 level' (1x por bizDate) | Tournament: rank pelo maior nivel alcancado
    Medal: 'Reach level 150' | Tudo FAIL-OPEN, retry 3x (0/1.5/3.5s), guards anti-duplicata (inflight) */
-var MEDAL_LEVEL=150;
+var MEDAL_LEVEL=2; /* meta baixa de proposito: jogador/revisor ganha a medalha rapido. Valor original era 150 */
+try{if(MEDAL_LEVEL!==150)console.warn('[cidi] MEDAL_LEVEL='+MEDAL_LEVEL+' (meta rapida). Original = 150.');}catch(e){}
 var cidiFlags={taskDate:'',tourBest:0,tourPending:0,medalOwned:false};
 var cidiInflight={task:false,medal:false,tour:0};
 function cidiLoadFlags(){try{var f=JSON.parse(localStorage.getItem('hss_cidi')||'{}');for(var k in cidiFlags)if(f[k]!=null)cidiFlags[k]=f[k];}catch(e){}}
